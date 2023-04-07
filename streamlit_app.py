@@ -12,6 +12,7 @@ import openai
 from docx import Document
 from PyPDF2 import PdfReader
 from PyPDF2.errors import PdfReadError
+from openpyxl.styles.alignment import Alignment
 
 # Get Redis configuration from st.secrets
 redis_host = st.secrets["redis"]["host"]
@@ -124,6 +125,16 @@ def save_data_to_excel(sorted_data):
     with BytesIO() as bIO:
         with pd.ExcelWriter(bIO, engine='openpyxl', mode='w') as writer:
             df.to_excel(writer, index=False)
+            
+            # Access the worksheet and set column width and word wrap
+            ws = writer.book.active
+            ws.column_dimensions['A'].width = 30
+            ws.column_dimensions['B'].width = 50
+            ws.column_dimensions['C'].width = 25
+            for row in ws.iter_rows(min_row=2):
+                for cell in row:
+                    cell.alignment = Alignment(wrap_text=True)  
+            
         bIO.seek(0)
         return bIO.read()
 
