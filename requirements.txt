@@ -3,3 +3,5 @@ redis
 pandas
 openpyxl
 openai
+docx
+PyPDF2
