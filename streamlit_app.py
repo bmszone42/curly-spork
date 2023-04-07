@@ -84,7 +84,7 @@ def main():
     st.sidebar.subheader("Stored data")
     sorted_data = get_sorted_data()
     for key, data in sorted_data.items():
-        st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        #st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
 
         # Add a checkbox for each entry
         delete_entry = st.sidebar.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
