@@ -87,10 +87,10 @@ def main():
         st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
 
         # Add a checkbox for each entry
-        delete_entry = st.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        delete_entry = st.sidebar.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
         if delete_entry:
             r.delete(key)
-            st.success(f"Data with Key: {key} has been deleted.")
+            st.sidebar.success(f"Data with Key: {key} has been deleted.")
             experimental_rerun()
         
      # Button to save data to an Excel file
