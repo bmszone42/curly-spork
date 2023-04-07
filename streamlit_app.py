@@ -1,5 +1,6 @@
 # Import required libraries
 import streamlit as st
+from streamlit import experimental_rerun
 import redis
 import json
 import time
@@ -106,6 +107,7 @@ def main():
         if delete_entry:
             r.delete(key)
             st.success(f"Data with Key: {key} has been deleted.")
+            experimental_rerun()
  
         
 # Run the Streamlit app
