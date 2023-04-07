@@ -80,11 +80,11 @@ def main():
             delete_all_keys()
             st.success("All data has been deleted.")
 
-#     # Display stored data
-#     st.sidebar.subheader("Stored data")
-#     sorted_data = get_sorted_data()
-#     for key, data in sorted_data.items():
-#         st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+    # Display stored data
+    st.sidebar.subheader("Stored data")
+    sorted_data = get_sorted_data()
+    for key, data in sorted_data.items():
+        st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
         
         
      # Button to save data to an Excel file
