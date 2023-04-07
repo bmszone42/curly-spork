@@ -79,18 +79,12 @@ def main():
             delete_all_keys()
             st.success("All data has been deleted.")
 
-    # Display stored data
-    st.sidebar.subheader("Stored data")
-    sorted_data = get_sorted_data()
-    for key, data in sorted_data.items():
-        st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+#     # Display stored data
+#     st.sidebar.subheader("Stored data")
+#     sorted_data = get_sorted_data()
+#     for key, data in sorted_data.items():
+#         st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
         
-         # Add a checkbox for each entry
-        delete_entry = st.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
-        if delete_entry:
-            r.delete(key)
-            st.success(f"Data with Key: {key} has been deleted.")
-
         
      # Button to save data to an Excel file
     excel_data = save_data_to_excel(sorted_data)
@@ -107,7 +101,12 @@ def main():
     for key, data in sorted_data.items():
         st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
 
-        
+        # Add a checkbox for each entry
+        delete_entry = st.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        if delete_entry:
+            r.delete(key)
+            st.success(f"Data with Key: {key} has been deleted.")
+ 
         
 # Run the Streamlit app
 if __name__ == "__main__":
