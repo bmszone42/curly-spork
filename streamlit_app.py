@@ -7,6 +7,9 @@ import time
 import pandas as pd
 from io import BytesIO
 import openai
+from docx import Document
+from PyPDF2 import PdfReader
+from PyPDF2.errors import PdfReadError
 
 # Get Redis configuration from st.secrets
 redis_host = st.secrets["redis"]["host"]
@@ -19,23 +22,63 @@ openai.api_key = st.secrets["openai"]["api_key"]
 # Connect to Redis database
 r = redis.Redis(host=redis_host, port=redis_port, password=redis_password, db=0)
 
-# Function to store data in Redis
-def store_data_in_redis(key, value):
-    response = openai.Completion.create(
-        engine="davinci",
-        prompt=key,
-        max_tokens=2000,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-    value = response.choices[0].text.strip()
-    timestamp = time.time()
-    data = {
-        "value": value,
-        "created": timestamp,
-    }
-    r.set(key, json.dumps(data))
+# Function to read text from different file formats
+def read_pdf(file):
+    try:
+        pdf_reader = PdfReader(file)
+    except PdfReadError:
+        st.error("Unsupported PDF format")
+        return ""
+
+    text = ""
+    for page_num in range(min(len(pdf_reader.pages), 5)):
+        text += pdf_reader.pages[page_num].extract_text()
+    return text
+
+def read_txt(file):
+    return file.read()
+
+def read_docx(file):
+    try:
+        doc = Document(file)
+    except docx.opc.exceptions.PackageNotFoundError:
+        st.error("Unsupported Word document format")
+        return ""
+
+    text = ""
+    for paragraph in doc.paragraphs:
+        text += paragraph.text + "\n"
+    return text
+
+# Function to split text into chunks
+def split_text(text, chunk_size=4096):
+    lines = text.split("\n")
+    wrapped_lines = [word for line in lines for word in line.split(" ")]
+    return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
+
+# Function to generate answer using GPT-3
+def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-002",
+            prompt=key,
+            max_tokens=max_tokens,
+            n=1,
+            stop=None,
+            temperature=temperature,
+            top_p=top_p,
+        )
+        value = response.choices[0].text.strip()
+        timestamp = time.time()
+        data = {
+            "value": value,
+            "created": timestamp,
+        }
+        r.set(key, json.dumps(data))
+    except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
+            openai.error.APIError, openai.error.RateLimitError) as e:
+        st.error(f"An error occurred while generating the answer: {e}")
+        return ""
 
 def get_sorted_data():
     data = {}
@@ -44,7 +87,6 @@ def get_sorted_data():
             json_data = r.get(key).decode("utf-8")
             deserialized_data = json.loads(json_data)
             if "created" in deserialized_data:
-                #data[int(key.decode("utf-8"))] = deserialized_data
                 data[(key.decode("utf-8"))] = deserialized_data
         except json.JSONDecodeError:
             pass
@@ -74,17 +116,35 @@ def save_data_to_excel(sorted_data):
 
 # Streamlit app
 def main():
-    st.title("Store Data in Redis using Streamlit")
+    st.set_page_config(page_title="PDF Q&A", page_icon=":books:")
 
-    st.subheader("Enter your data using text input")
-    key = st.text_area("Enter a key", value="", height=50)
-    value = st.text_area("Enter a value", value="", height=50)
-    
-#     # Input fields with sliders
-#     st.subheader("Enter your data using sliders")
-#     key = st.slider("Select a key", 0, 100, 0)
-#     value = st.slider("Select a value", 0, 100, 0)
+    st.title("PDF Q&A")
+    st.sidebar.title("Options")
 
+    # File upload
+    uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
+    if uploaded_file is not None:
+        # Read PDF file
+        try:
+            pdf_reader = PdfFileReader(uploaded_file)
+            document_text = ""
+            for page_num in range(min(len(pdf_reader.pages), 5)):
+                document_text += pdf_reader.pages[page_num].extract_text()
+        except PdfReadError:
+            st.error("Unsupported PDF format")
+            return
+
+        # Display document content
+        st.write("Document content:")
+        st.write(document_text)
+
+        # GPT-3 Settings
+        st.sidebar.title("GPT-3 Settings")
+        temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
+        max_tokens = st.sidebar.slider("Max Tokens", 10, 500, 150, 10)
+        top_p = st.sidebar.slider("Top-p", 0.0, 1.0, 1.0, 0.1)
+
+                                        
     # Button to store data
     if st.button("Store data"):
         store_data_in_redis(key, value)
@@ -101,7 +161,6 @@ def main():
     st.sidebar.subheader("Stored data")
     sorted_data = get_sorted_data()
     for key, data in sorted_data.items():
-        #st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
 
         # Add a checkbox for each entry
         delete_entry = st.sidebar.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
