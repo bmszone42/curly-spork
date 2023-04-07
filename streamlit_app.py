@@ -6,18 +6,30 @@ import json
 import time
 import pandas as pd
 from io import BytesIO
-
+import openai
 
 # Get Redis configuration from st.secrets
 redis_host = st.secrets["redis"]["host"]
 redis_port = st.secrets["redis"]["port"]
 redis_password = st.secrets["redis"]["password"]
 
+# Get OpenAI configuration from st.secrets
+openai.api_key = st.secrets["openai"]["api_key"]
+
 # Connect to Redis database
 r = redis.Redis(host=redis_host, port=redis_port, password=redis_password, db=0)
 
 # Function to store data in Redis
 def store_data_in_redis(key, value):
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=key,
+        max_tokens=2048,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+    value = response.choices[0].text.strip()
     timestamp = time.time()
     data = {
         "value": value,
