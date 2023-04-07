@@ -3,7 +3,11 @@ import streamlit as st
 import redis
 
 # Connect to Redis database
-r = redis.Redis(host='localhost', port=6379, db=0)
+#r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(
+  host='redis-10975.c238.us-central1-2.gce.cloud.redislabs.com',
+  port=10975,
+  password= st.secrets["REDIS_PASSWORD"]
 
 # Function to store data in Redis
 def store_data_in_redis(key, value):
