@@ -5,7 +5,6 @@ import json
 import time
 
 # Connect to Redis database
-#r = redis.Redis(host='localhost', port=6379, db=0)
 # r = redis.Redis(
 #   host='redis-10975.c238.us-central1-2.gce.cloud.redislabs.com',
 #   port=10975,
