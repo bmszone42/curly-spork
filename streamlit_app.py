@@ -23,7 +23,7 @@ r = redis.Redis(host=redis_host, port=redis_port, password=redis_password, db=0)
 def store_data_in_redis(key, value):
     timestamp = time.time()
     data = {
-        "value": value,
+        "value": key * value,
         "created": timestamp,
     }
     r.set(key, json.dumps(data))
@@ -40,6 +40,11 @@ def get_sorted_data():
             pass
     return dict(sorted(data.items(), key=lambda item: item[1]["created"]))
 
+def delete_all_keys():
+    for key in r.keys():
+        r.delete(key)
+
+
 # Streamlit app
 def main():
     st.title("Store Data in Redis using Streamlit")
@@ -53,13 +58,19 @@ def main():
     if st.button("Store data"):
         store_data_in_redis(key, value)
         st.success(f"Data stored successfully: Key: {key}, Value: {value}")
+        
+    # Button to reset and delete all data
+    if st.button("Reset and delete all data"):
+        delete_all_keys()
+        st.success("All data has been deleted.")
 
     # Display stored data
     st.subheader("Stored data")
     sorted_data = get_sorted_data()
     for key, data in sorted_data.items():
         st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
-
+        
+        
 # Run the Streamlit app
 if __name__ == "__main__":
     main()
