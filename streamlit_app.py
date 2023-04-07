@@ -93,6 +93,13 @@ def main():
         file_name="output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+    
+    # Display stored data in the sidebar
+    st.sidebar.subheader("Stored data")
+    sorted_data = get_sorted_data()
+    for key, data in sorted_data.items():
+        st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+
         
         
 # Run the Streamlit app
