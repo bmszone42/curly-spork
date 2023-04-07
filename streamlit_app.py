@@ -80,23 +80,7 @@ def main():
             delete_all_keys()
             st.success("All data has been deleted.")
 
-    # Display stored data
-    st.sidebar.subheader("Stored data")
-    sorted_data = get_sorted_data()
-    for key, data in sorted_data.items():
-        st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
-        
-        
-     # Button to save data to an Excel file
-    excel_data = save_data_to_excel(sorted_data)
-    st.download_button(
-        label="Save data to Excel",
-        data=excel_data,
-        file_name="output.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    
-    # Display stored data in the sidebar
+     # Display stored data in the sidebar
     st.sidebar.subheader("Stored data")
     sorted_data = get_sorted_data()
     for key, data in sorted_data.items():
@@ -108,6 +92,28 @@ def main():
             r.delete(key)
             st.success(f"Data with Key: {key} has been deleted.")
             experimental_rerun()
+        
+     # Button to save data to an Excel file
+    excel_data = save_data_to_excel(sorted_data)
+    st.download_button(
+        label="Save data to Excel",
+        data=excel_data,
+        file_name="output.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    
+#     # Display stored data in the sidebar
+#     st.sidebar.subheader("Stored data")
+#     sorted_data = get_sorted_data()
+#     for key, data in sorted_data.items():
+#         st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+
+#         # Add a checkbox for each entry
+#         delete_entry = st.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+#         if delete_entry:
+#             r.delete(key)
+#             st.success(f"Data with Key: {key} has been deleted.")
+#             experimental_rerun()
  
         
 # Run the Streamlit app
