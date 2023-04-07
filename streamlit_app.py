@@ -59,10 +59,12 @@ def main():
         store_data_in_redis(key, value)
         st.success(f"Data stored successfully: Key: {key}, Value: {value}")
         
-    # Button to reset and delete all data
-    if st.button("Reset and delete all data"):
-        delete_all_keys()
-        st.success("All data has been deleted.")
+    # Reset and delete all data with confirmation
+    with st.beta_expander("Reset and delete all data"):
+        st.warning("This will delete all of your data. Are you sure?")
+        if st.button("Yes, delete all data"):
+            delete_all_keys()
+            st.success("All data has been deleted.")
 
     # Display stored data
     st.subheader("Stored data")
