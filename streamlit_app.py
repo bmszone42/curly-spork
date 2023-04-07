@@ -12,7 +12,7 @@ r = redis.Redis(
 
 # Function to store data in Redis
 def store_data_in_redis(key, value):
-    r.set(key, value)
+    r.set(key, key*value)
 
 # Streamlit app
 def main():
