@@ -4,6 +4,7 @@ import redis
 import json
 import time
 import pandas as pd
+from io import BytesIO
 
 
 # Get Redis configuration from st.secrets
