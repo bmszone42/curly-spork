@@ -130,6 +130,8 @@ def main():
 
     st.title("PDF Q&A")
     st.sidebar.title("Options")
+    
+     uploaded_file = st.file_uploader("Choose a file", type=["pdf", "docx", "txt"])
 
     if uploaded_file:
         document_text = process_uploaded_file(uploaded_file)
