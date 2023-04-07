@@ -59,11 +59,11 @@ def split_text(text, chunk_size=4096):
     return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
 
 # Function to generate answer using GPT-3
-def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
+def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
         response = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=prompt,
+            prompt=key,
             max_tokens=max_tokens,
             n=1,
             stop=None,
