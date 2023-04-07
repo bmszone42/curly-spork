@@ -31,8 +31,13 @@ def store_data_in_redis(key, value):
 def get_sorted_data():
     data = {}
     for key in r.keys():
-        json_data = r.get(key).decode("utf-8")
-        data[int(key.decode("utf-8"))] = json.loads(json_data)
+        try:
+            json_data = r.get(key).decode("utf-8")
+            deserialized_data = json.loads(json_data)
+            if "created" in deserialized_data:
+                data[int(key.decode("utf-8"))] = deserialized_data
+        except json.JSONDecodeError:
+            pass
     return dict(sorted(data.items(), key=lambda item: item[1]["created"]))
 
 # Streamlit app
