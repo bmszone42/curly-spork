@@ -20,7 +20,7 @@ r = redis.Redis(host=redis_host, port=redis_port, password=redis_password, db=0)
 def store_data_in_redis(key, value):
     timestamp = time.time()
     data = {
-        "value": key * value,
+        "value": value,
         "created": timestamp,
     }
     r.set(key, json.dumps(data))
