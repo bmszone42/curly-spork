@@ -24,7 +24,7 @@ def store_data_in_redis(key, value):
     response = openai.Completion.create(
         engine="davinci",
         prompt=key,
-        max_tokens=2048,
+        max_tokens=2000,
         n=1,
         stop=None,
         temperature=0.5,
