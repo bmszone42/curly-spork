@@ -121,28 +121,17 @@ def main():
     st.title("PDF Q&A")
     st.sidebar.title("Options")
 
-    # File upload
-    uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
-    if uploaded_file is not None:
-        # Read PDF file
-        try:
-            pdf_reader = PdfFileReader(uploaded_file)
-            document_text = ""
-            for page_num in range(min(len(pdf_reader.pages), 5)):
-                document_text += pdf_reader.pages[page_num].extract_text()
-        except PdfReadError:
-            st.error("Unsupported PDF format")
-            return
+    if uploaded_file:
+        document_text = process_uploaded_file(uploaded_file)
+        if document_text:
+            st.write("Document Content:")
+            st.write(document_text)
 
-        # Display document content
-        st.write("Document content:")
-        st.write(document_text)
-
-        # GPT-3 Settings
-        st.sidebar.title("GPT-3 Settings")
-        temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
-        max_tokens = st.sidebar.slider("Max Tokens", 10, 500, 150, 10)
-        top_p = st.sidebar.slider("Top-p", 0.0, 1.0, 1.0, 0.1)
+            # GPT-3 Settings
+            st.sidebar.title("GPT-3 Settings")
+            temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
+            max_tokens = st.sidebar.slider("Max Tokens", 10, 500, 150, 10)
+            top_p = st.sidebar.slider("Top-p", 0.0, 1.0, 1.0, 0.1)
 
                                         
     # Button to store data
