@@ -32,7 +32,8 @@ def get_sorted_data():
             json_data = r.get(key).decode("utf-8")
             deserialized_data = json.loads(json_data)
             if "created" in deserialized_data:
-                data[int(key.decode("utf-8"))] = deserialized_data
+                #data[int(key.decode("utf-8"))] = deserialized_data
+                data[(key.decode("utf-8"))] = deserialized_data
         except json.JSONDecodeError:
             pass
     return dict(sorted(data.items(), key=lambda item: item[1]["created"]))
