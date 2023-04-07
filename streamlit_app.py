@@ -63,10 +63,14 @@ def save_data_to_excel(sorted_data):
 def main():
     st.title("Store Data in Redis using Streamlit")
 
-    # Input fields with sliders
-    st.subheader("Enter your data using sliders")
-    key = st.slider("Select a key", 0, 100, 0)
-    value = st.slider("Select a value", 0, 100, 0)
+    st.subheader("Enter your data using text input")
+    key = st.text_area("Enter a key", value="", height=50)
+    value = st.text_area("Enter a value", value="", height=50)
+    
+#     # Input fields with sliders
+#     st.subheader("Enter your data using sliders")
+#     key = st.slider("Select a key", 0, 100, 0)
+#     value = st.slider("Select a value", 0, 100, 0)
 
     # Button to store data
     if st.button("Store data"):
@@ -101,20 +105,6 @@ def main():
         file_name="output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    
-#     # Display stored data in the sidebar
-#     st.sidebar.subheader("Stored data")
-#     sorted_data = get_sorted_data()
-#     for key, data in sorted_data.items():
-#         st.sidebar.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
-
-#         # Add a checkbox for each entry
-#         delete_entry = st.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
-#         if delete_entry:
-#             r.delete(key)
-#             st.success(f"Data with Key: {key} has been deleted.")
-#             experimental_rerun()
- 
         
 # Run the Streamlit app
 if __name__ == "__main__":
