@@ -2,3 +2,4 @@ streamlit
 redis
 pandas
 openpyxl
+openai
