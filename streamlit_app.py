@@ -73,17 +73,24 @@ def main():
         st.success(f"Data stored successfully: Key: {key}, Value: {value}")
         
     # Reset and delete all data with confirmation
-    with st.expander("Reset and delete all data"):
+    with st.sidebar.expander("Reset and delete all data"):
         st.warning("This will delete all of your data. Are you sure?")
         if st.button("Yes, delete all data"):
             delete_all_keys()
             st.success("All data has been deleted.")
 
     # Display stored data
-    st.subheader("Stored data")
+    st.sidebar.subheader("Stored data")
     sorted_data = get_sorted_data()
     for key, data in sorted_data.items():
         st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        
+         # Add a checkbox for each entry
+        delete_entry = st.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        if delete_entry:
+            r.delete(key)
+            st.success(f"Data with Key: {key} has been deleted.")
+
         
      # Button to save data to an Excel file
     excel_data = save_data_to_excel(sorted_data)
