@@ -79,6 +79,16 @@ def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
         return ""
+    
+def process_uploaded_file(uploaded_file):
+    file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+    switcher = {
+        ".pdf": read_pdf,
+        ".docx": read_docx,
+        ".txt": read_txt,
+    }
+    func = switcher.get(file_extension, lambda: st.error("Unsupported file format"))
+    return func(uploaded_file)
 
 def get_sorted_data():
     data = {}
