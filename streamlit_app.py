@@ -39,7 +39,7 @@ def delete_all_keys():
     for key in r.keys():
         r.delete(key)
 
-def save_data_to_excel(sorted_data, file_name="output.xlsx"):
+def save_data_to_excel(sorted_data):
     data_list = []
 
     for key, data in sorted_data.items():
@@ -50,8 +50,13 @@ def save_data_to_excel(sorted_data, file_name="output.xlsx"):
         })
 
     df = pd.DataFrame(data_list)
-    df.to_excel(file_name, index=False)
 
+    with BytesIO() as bIO:
+        writer = pd.ExcelWriter(bIO, engine='openpyxl')
+        df.to_excel(writer, index=False)
+        writer.save()
+        bIO.seek(0)
+        return bIO.read()
 
 # Streamlit app
 def main():
@@ -80,10 +85,14 @@ def main():
     for key, data in sorted_data.items():
         st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
         
-    # Button to save data to an Excel file
-    if st.button("Save data to Excel"):
-        save_data_to_excel(sorted_data)
-        st.success("Data saved to output.xlsx")
+     # Button to save data to an Excel file
+    excel_data = save_data_to_excel(sorted_data)
+    st.download_button(
+        label="Save data to Excel",
+        data=excel_data,
+        file_name="output.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
         
         
 # Run the Streamlit app
