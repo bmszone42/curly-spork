@@ -157,10 +157,11 @@ def main():
             if st.button("Get Answer"):
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {key}\nAnswer:"
-                    chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
+                    chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
                     answer += chunk_answer
                 st.write("Answer:")
                 st.write(answer)
+                value=answer
 
                                         
     # Button to store data
