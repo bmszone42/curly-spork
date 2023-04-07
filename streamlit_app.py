@@ -53,9 +53,8 @@ def save_data_to_excel(sorted_data):
     df = pd.DataFrame(data_list)
 
     with BytesIO() as bIO:
-        writer = pd.ExcelWriter(bIO, engine='openpyxl')
-        df.to_excel(writer, index=False)
-        writer.save_data()
+        with pd.ExcelWriter(bIO, engine='openpyxl', mode='w') as writer:
+            df.to_excel(writer, index=False)
         bIO.seek(0)
         return bIO.read()
 
