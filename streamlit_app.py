@@ -3,13 +3,8 @@ import streamlit as st
 import redis
 import json
 import time
+import pandas as pd
 
-# Connect to Redis database
-# r = redis.Redis(
-#   host='redis-10975.c238.us-central1-2.gce.cloud.redislabs.com',
-#   port=10975,
-#   password= st.secrets["REDIS_PASSWORD"],
-#   db = 0)
 
 # Get Redis configuration from st.secrets
 redis_host = st.secrets["redis"]["host"]
@@ -44,6 +39,19 @@ def delete_all_keys():
     for key in r.keys():
         r.delete(key)
 
+def save_data_to_excel(sorted_data, file_name="output.xlsx"):
+    data_list = []
+
+    for key, data in sorted_data.items():
+        data_list.append({
+            "Key": key,
+            "Value": data["value"],
+            "Created": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data["created"]))
+        })
+
+    df = pd.DataFrame(data_list)
+    df.to_excel(file_name, index=False)
+
 
 # Streamlit app
 def main():
@@ -71,6 +79,11 @@ def main():
     sorted_data = get_sorted_data()
     for key, data in sorted_data.items():
         st.write(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        
+    # Button to save data to an Excel file
+    if st.button("Save data to Excel"):
+        save_data_to_excel(sorted_data)
+        st.success("Data saved to output.xlsx")
         
         
 # Run the Streamlit app
