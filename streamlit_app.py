@@ -4,6 +4,7 @@ from streamlit import experimental_rerun
 import redis
 import json
 import time
+import io
 import pandas as pd
 from io import BytesIO
 import openai
