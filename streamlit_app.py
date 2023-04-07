@@ -5,6 +5,7 @@ import redis
 import json
 import time
 import io
+import os
 import pandas as pd
 from io import BytesIO
 import openai
