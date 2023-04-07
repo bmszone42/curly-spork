@@ -165,10 +165,10 @@ def main():
                 value=answer
 
                                         
-    # Button to store data
-    if st.button("Store data"):
-        store_data_in_redis(key, value)
-        st.success(f"Data stored successfully: Key: {key}, Value: {value}")
+#     # Button to store data
+#     if st.button("Store data"):
+#         store_data_in_redis(key, value)
+#         st.success(f"Data stored successfully: Key: {key}, Value: {value}")
         
     # Reset and delete all data with confirmation
     with st.sidebar.expander("Reset and delete all data"):
