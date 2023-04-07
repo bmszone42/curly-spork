@@ -60,7 +60,7 @@ def main():
         st.success(f"Data stored successfully: Key: {key}, Value: {value}")
         
     # Reset and delete all data with confirmation
-    with st.beta_expander("Reset and delete all data"):
+    with st.expander("Reset and delete all data"):
         st.warning("This will delete all of your data. Are you sure?")
         if st.button("Yes, delete all data"):
             delete_all_keys()
