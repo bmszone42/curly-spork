@@ -177,7 +177,7 @@ def save_data_to_excel(sorted_data):
     for key, data in sorted_data.items():
         data_list.append({
             "Question": key,
-            "Answer": answers,
+            "Answer": answer,
             "Created": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data["created"]))
         })
 
