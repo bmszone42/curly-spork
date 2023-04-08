@@ -77,7 +77,7 @@ def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
             answers.append(answer)
         timestamp = time.time()
         data = {
-            "value": answers,
+            "value": answer,
             "created": timestamp,
         }
         r.set(key, json.dumps(data))
@@ -175,6 +175,10 @@ def save_data_to_excel(sorted_data):
     data_list = []
 
     for key, data in sorted_data.items():
+        if isinstance(data["value"], list):
+            answer = "\n".join(data["value"])
+        else:
+            answer = data["value"]
         data_list.append({
             "Question": key,
             "Answer": answer,
@@ -198,6 +202,7 @@ def save_data_to_excel(sorted_data):
             
         bIO.seek(0)
         return bIO.read()
+
 
 # Streamlit app
 def main():
