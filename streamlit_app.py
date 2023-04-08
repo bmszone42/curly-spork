@@ -77,27 +77,6 @@ def read_docx(file):
 #         chunks.append(current_chunk)
 #     return chunks
 
-def split_text(text, question, chunk_size=4096):
-    chunks = []
-    words = text.split()
-    current_chunk = ""
-    for word in words:
-        # Add the current word to the current chunk, separated by a space
-        temp_chunk = current_chunk + " " + word if current_chunk else word
-        # If the current chunk exceeds the maximum length, add it to the list of chunks and start a new one
-        if len(temp_chunk) > chunk_size:
-            chunks.append(current_chunk)
-            current_chunk = word
-        else:
-            current_chunk = temp_chunk
-    # Add the last chunk to the list of chunks
-    if current_chunk:
-        chunks.append(current_chunk)
-    # Call generate_answer() once with the entire text
-    prompt = f"Answer the following question based on the document's content:\n\n{text}\n\nQuestion: {question}\nAnswer:"
-    answer = generate_answer(prompt, temperature, max_tokens, top_p)
-    return [answer]
-
 def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
         response = openai.Completion.create(
@@ -121,6 +100,29 @@ def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
         return ""
+
+
+
+def split_text(text, question, chunk_size=4096):
+    chunks = []
+    words = text.split()
+    current_chunk = ""
+    for word in words:
+        # Add the current word to the current chunk, separated by a space
+        temp_chunk = current_chunk + " " + word if current_chunk else word
+        # If the current chunk exceeds the maximum length, add it to the list of chunks and start a new one
+        if len(temp_chunk) > chunk_size:
+            chunks.append(current_chunk)
+            current_chunk = word
+        else:
+            current_chunk = temp_chunk
+    # Add the last chunk to the list of chunks
+    if current_chunk:
+        chunks.append(current_chunk)
+    # Call generate_answer() once with the entire text
+    prompt = f"Answer the following question based on the document's content:\n\n{text}\n\nQuestion: {question}\nAnswer:"
+    answer = generate_answer(prompt, temperature, max_tokens, top_p)
+    return [answer]
 
 
 def process_uploaded_file(uploaded_file):
