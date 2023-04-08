@@ -165,12 +165,7 @@ def main():
             top_p = st.sidebar.slider("Top-p", 0.0, 1.0, 1.0, 0.1)
             
             question = st.text_area("Ask a question about the document:")
-
-#             if st.button("Get Answer"):
-#                 #prompt = f"Answer the following question based on the document's content:\n\n{document_text}\n\nQuestion: {question}\nAnswer:"
-#                 prompt = f"Answer the following question based on the document's content:\n\n{document_text}\n\nQuestion: {question}\nAnswer:"
-#                 answer = generate_answer(prompt, temperature, max_tokens, top_p)
-#                 st.write("Answer: " + answer)      
+     
             if st.button("Get Answer"):
                 chunks = split_text(document_text)
                 answer = ""
