@@ -60,7 +60,7 @@ def generate_answer(prompt, question, temperature=0.5, max_tokens=4096, top_p=1.
             chunk = prompt[i:i+max_tokens]
             chunk_prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
             response = openai.Completion.create(
-                engine="gpt-3.5-turbo",
+                engine="text-davinci-003",
                 prompt=chunk_prompt,
                 max_tokens=max_tokens,
                 n=1,
