@@ -53,15 +53,15 @@ def read_docx(file):
         text += paragraph.text + "\n"
     return text
 
-# Function to split text into chunks
-def split_text(text, chunk_size=4096):
-    lines = text.split("\n")
-    wrapped_lines = [word for line in lines for word in line.split(" ")]
-    return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
+# # Function to split text into chunks
+# def split_text(text, chunk_size=4096):
+#     lines = text.split("\n")
+#     wrapped_lines = [word for line in lines for word in line.split(" ")]
+#     return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
 
-# def split_text(text, chunk_size=2048):
-#     words = text.split()
-#     return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
+def split_text(text, chunk_size=4096):
+    words = text.split()
+    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
 
 def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
