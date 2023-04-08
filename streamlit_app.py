@@ -82,7 +82,6 @@ def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
         }
         r.set(key, json.dumps(data))
         return answers
-        st.write("The answer from generate is: " + answers)
     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
@@ -174,15 +173,15 @@ def main():
             chunk_size = 4096
             chunks = [document_text[i:i+chunk_size] for i in range(0, len(document_text), chunk_size)]
 
-            answer = ""
+            answers = ""
 
             if st.button("Get Answer"):
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {key}\nAnswer:"
                     chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
-                    answer += "\n".join(chunk_answer) # convert the list to a string before concatenating
-                st.write("Answer:")
-                st.write(answer) # answer is already a string object                             
+                    answers += "\n".join(chunk_answer) # convert the list to a string before concatenating
+                st.write("Answer:" + answers)
+                #st.write(answers) # answer is already a string object                             
         
     # Reset and delete all data with confirmation
     with st.sidebar.expander("Reset and delete all data"):
