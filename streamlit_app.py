@@ -57,7 +57,7 @@ def read_docx(file):
 def split_text(text, chunk_size=4096):
     lines = text.split("\n")
     wrapped_lines = [word for line in lines for word in line.split(" ")]
-    return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
+    return [wrapped_lines[i:i+int(chunk_size)] for i in range(0, len(wrapped_lines), int(chunk_size))]
 
 # def split_text(text, chunk_size=4096):
 #     chunks = []
