@@ -59,6 +59,24 @@ def read_docx(file):
 #     wrapped_lines = [word for line in lines for word in line.split(" ")]
 #     return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
 
+# def split_text(text, chunk_size=4096):
+#     chunks = []
+#     words = text.split()
+#     current_chunk = ""
+#     for word in words:
+#         # Add the current word to the current chunk, separated by a space
+#         temp_chunk = current_chunk + " " + word if current_chunk else word
+#         # If the current chunk exceeds the maximum length, add it to the list of chunks and start a new one
+#         if len(temp_chunk) > chunk_size:
+#             chunks.append(current_chunk)
+#             current_chunk = word
+#         else:
+#             current_chunk = temp_chunk
+#     # Add the last chunk to the list of chunks
+#     if current_chunk:
+#         chunks.append(current_chunk)
+#     return chunks
+
 def split_text(text, chunk_size=4096):
     chunks = []
     words = text.split()
@@ -75,7 +93,10 @@ def split_text(text, chunk_size=4096):
     # Add the last chunk to the list of chunks
     if current_chunk:
         chunks.append(current_chunk)
-    return chunks
+    # Call generate_answer() once with the entire text
+    prompt = f"Answer the following question based on the document's content:\n\n{text}\n\nQuestion: {question}\nAnswer:"
+    answer = generate_answer(prompt, temperature, max_tokens, top_p)
+    return [answer]
 
 def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
