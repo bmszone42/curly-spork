@@ -173,6 +173,7 @@ def main():
         if st.button("Yes, delete all data"):
             delete_all_keys()
             st.success("All data has been deleted.")
+            experimental_rerun()
 
      # Display stored data in the sidebar
     st.sidebar.subheader("Stored data")
