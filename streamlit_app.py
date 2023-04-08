@@ -77,7 +77,7 @@ def read_docx(file):
 #         chunks.append(current_chunk)
 #     return chunks
 
-def split_text(text, chunk_size=4096):
+def split_text(text, question, chunk_size=4096):
     chunks = []
     words = text.split()
     current_chunk = ""
@@ -202,11 +202,11 @@ def main():
             question = st.text_area("Ask a question about the document:")
      
             if st.button("Get Answer"):
-                chunks = split_text(document_text)
+                chunks = split_text(document_text, question)
                 answer = ""
                 for chunk in chunks:
-                    prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
-                    chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
+                    #prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
+                    #chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
                     answer += chunk_answer + " "
                 st.write("Answer: " + answer.strip())
         
