@@ -74,7 +74,7 @@ def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
         value = response.choices[0].text.strip()
         timestamp = time.time()
         data = {
-            "value": value,
+            "Answer": value,
             "created": timestamp,
         }
         r.set(key, json.dumps(data))
@@ -170,10 +170,10 @@ def main():
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {key}\nAnswer:"
                     chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
-                    answer += chunk_answer
+                    value += chunk_answer
                 st.write("Answer:")
-                st.write(answer)
-                value=answer
+                st.write(value)
+                #value=answer
 
                                         
 #     # Button to store data
