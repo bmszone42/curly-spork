@@ -233,7 +233,7 @@ def main():
                     chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
                     answer += chunk_answer
                 st.write("Answer:")
-                st.write(answer)
+                st.write("\n".join(answer))
                 value = answer                              
         
     # Reset and delete all data with confirmation
