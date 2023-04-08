@@ -60,28 +60,25 @@ def split_text(text, chunk_size=4096):
     return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
 
 
-def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
+def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
-        answers = []
-        for chunk in split_text(key):
-            response = openai.Completion.create(
-                engine="text-davinci-002",
-                prompt=chunk,
-                max_tokens=max_tokens,
-                n=1,
-                stop=None,
-                temperature=temperature,
-                top_p=top_p,
-            )
-            answer = response.choices[0].text.strip()
-            answers.append(answer)
+        response = openai.Completion.create(
+            engine="text-davinci-002",
+            prompt=prompt,
+            max_tokens=max_tokens,
+            n=1,
+            stop=None,
+            temperature=temperature,
+            top_p=top_p,
+        )
+        answer = response.choices[0].text.strip()
         timestamp = time.time()
         data = {
             "value": answer,
             "created": timestamp,
         }
-        r.set(key, json.dumps(data))
-        return answers
+        r.set(prompt, json.dumps(data))
+        return answer
     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
@@ -118,13 +115,9 @@ def save_data_to_excel(sorted_data):
     data_list = []
 
     for key, data in sorted_data.items():
-        if isinstance(data["value"], list):
-            answer = "\n".join(data["value"])
-        else:
-            answer = data["value"]
         data_list.append({
             "Question": key,
-            "Answer": answer,
+            "Answer": data["value"],
             "Created": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data["created"]))
         })
 
@@ -145,7 +138,6 @@ def save_data_to_excel(sorted_data):
             
         bIO.seek(0)
         return bIO.read()
-
 
 # Streamlit app
 def main():
@@ -168,20 +160,12 @@ def main():
             max_tokens = st.sidebar.slider("Max Tokens", 10, 500, 150, 10)
             top_p = st.sidebar.slider("Top-p", 0.0, 1.0, 1.0, 0.1)
             
-            key = st.text_area("Ask a question about the document:")
-
-            chunk_size = 4096
-            chunks = [document_text[i:i+chunk_size] for i in range(0, len(document_text), chunk_size)]
-
-            answers = ""
+            question = st.text_area("Ask a question about the document:")
 
             if st.button("Get Answer"):
-                for chunk in chunks:
-                    prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {key}\nAnswer:"
-                    chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
-                    answers += "\n".join(chunk_answer) # convert the list to a string before concatenating
-                st.write("Answer:" + answers)
-                #st.write(answers) # answer is already a string object                             
+                prompt = f"Answer the following question based on the document's content:\n\n{document_text}\n\nQuestion: {question}\nAnswer:"
+                answer = generate_answer(prompt, temperature, max_tokens, top_p)
+                st.write("Answer: " + answer)                            
         
     # Reset and delete all data with confirmation
     with st.sidebar.expander("Reset and delete all data"):
