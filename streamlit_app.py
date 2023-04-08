@@ -197,7 +197,8 @@ def main():
                 answer = ""
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
-                    chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
+                    #chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
+                    chunk_answer = generate_answer(prompt, question, temperature, max_tokens, top_p)
                     answer += chunk_answer + " "
                 st.write("Answer: " + answer.strip())
         
