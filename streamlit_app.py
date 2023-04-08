@@ -53,24 +53,23 @@ def read_docx(file):
         text += paragraph.text + "\n"
     return text
 
-
-def split_text(text, chunk_size=4096):
-    lines = text.split("\n")
-    wrapped_lines = [word for line in lines for word in line.split(" ")]
-    return [wrapped_lines[i:i+int(chunk_size.strip())] for i in range(0, len(wrapped_lines), int(chunk_size.strip()))]
-
 def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-002",
-            prompt=prompt,
-            max_tokens=max_tokens,
-            n=1,
-            stop=None,
-            temperature=temperature,
-            top_p=top_p,
-        )
-        answer = response.choices[0].text.strip()
+        # Split text into chunks of 4096 tokens
+        chunks = [prompt[i:i+4096] for i in range(0, len(prompt), 4096)]
+        answer = ""
+        for chunk in chunks:
+            response = openai.Completion.create(
+                engine="text-davinci-002",
+                prompt=chunk,
+                max_tokens=max_tokens,
+                n=1,
+                stop=None,
+                temperature=temperature,
+                top_p=top_p,
+            )
+            chunk_answer = response.choices[0].text.strip()
+            answer += chunk_answer + " "
         timestamp = time.time()
         data = {
             "value": answer,
@@ -82,6 +81,31 @@ def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
         return ""
+
+
+# def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
+#     try:
+#         response = openai.Completion.create(
+#             engine="text-davinci-002",
+#             prompt=prompt,
+#             max_tokens=max_tokens,
+#             n=1,
+#             stop=None,
+#             temperature=temperature,
+#             top_p=top_p,
+#         )
+#         answer = response.choices[0].text.strip()
+#         timestamp = time.time()
+#         data = {
+#             "value": answer,
+#             "created": timestamp,
+#         }
+#         r.set(prompt, json.dumps(data))
+#         return answer
+#     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
+#             openai.error.APIError, openai.error.RateLimitError) as e:
+#         st.error(f"An error occurred while generating the answer: {e}")
+#         return ""
 
 def process_uploaded_file(uploaded_file):
     file_extension = os.path.splitext(uploaded_file.name)[1].lower()
@@ -163,7 +187,8 @@ def main():
 
     
             if st.button("Get Answer"):
-                chunks = split_text(document_text, question)
+                #chunks = split_text(document_text, question)
+                chunks = [document_text[i:i+4096] for i in range(0, len(document_text), 4096)]
                 answer = ""
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
