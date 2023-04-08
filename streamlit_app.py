@@ -82,31 +82,6 @@ def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
         st.error(f"An error occurred while generating the answer: {e}")
         return ""
 
-
-# def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
-#     try:
-#         response = openai.Completion.create(
-#             engine="text-davinci-002",
-#             prompt=prompt,
-#             max_tokens=max_tokens,
-#             n=1,
-#             stop=None,
-#             temperature=temperature,
-#             top_p=top_p,
-#         )
-#         answer = response.choices[0].text.strip()
-#         timestamp = time.time()
-#         data = {
-#             "value": answer,
-#             "created": timestamp,
-#         }
-#         r.set(prompt, json.dumps(data))
-#         return answer
-#     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
-#             openai.error.APIError, openai.error.RateLimitError) as e:
-#         st.error(f"An error occurred while generating the answer: {e}")
-#         return ""
-
 def process_uploaded_file(uploaded_file):
     file_extension = os.path.splitext(uploaded_file.name)[1].lower()
     switcher = {
@@ -194,7 +169,7 @@ def main():
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
                     chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
                     answer += chunk_answer + " "
-                    st.write("Answer: " + answer.strip())
+                st.write("Answer: " + answer.strip())
         
     # Reset and delete all data with confirmation
     with st.sidebar.expander("Reset and delete all data"):
