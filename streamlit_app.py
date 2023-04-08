@@ -74,7 +74,7 @@ def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
         value = response.choices[0].text.strip()
         timestamp = time.time()
         data = {
-            "Answer": value,
+            "value": value,
             "created": timestamp,
         }
         r.set(key, json.dumps(data))
