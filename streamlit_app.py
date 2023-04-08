@@ -82,6 +82,7 @@ def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
         }
         r.set(key, json.dumps(data))
         return answers
+        st.write("The answer from generate is: " + answers)
     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
