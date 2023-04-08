@@ -115,8 +115,8 @@ def save_data_to_excel(sorted_data):
 
     for key, data in sorted_data.items():
         data_list.append({
-            "Key": key,
-            "Value": data["value"],
+            "Question": key,
+            "Answer": data["value"],
             "Created": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data["created"]))
         })
 
@@ -194,10 +194,10 @@ def main():
     for key, data in sorted_data.items():
 
         # Add a checkbox for each entry
-        delete_entry = st.sidebar.checkbox(f"Key: {key}, Value: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
+        delete_entry = st.sidebar.checkbox(f"Question: {key}, Answer: {data['value']}, Created: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['created']))}")
         if delete_entry:
             r.delete(key)
-            st.sidebar.success(f"Data with Key: {key} has been deleted.")
+            st.sidebar.success(f"Data with Question: {key} has been deleted.")
             experimental_rerun()
         
      # Button to save data to an Excel file
