@@ -177,8 +177,9 @@ def main():
             max_tokens = st.sidebar.slider("Max Tokens", 10, 500, 150, 10)
             top_p = st.sidebar.slider("Top-p", 0.0, 1.0, 1.0, 0.1)
             
-            question = st.text_area("Ask a question about the document:")
-     
+            question = st.text_area("Ask a question about the document:").strip()
+
+    
             if st.button("Get Answer"):
                 chunks = split_text(document_text, question)
                 answer = ""
