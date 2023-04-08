@@ -59,30 +59,58 @@ def split_text(text, chunk_size=4096):
     wrapped_lines = [word for line in lines for word in line.split(" ")]
     return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
 
-# Function to generate answer using GPT-3
+
 def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-002",
-            prompt=key,
-            max_tokens=max_tokens,
-            n=1,
-            stop=None,
-            temperature=temperature,
-            top_p=top_p,
-        )
-        value = response.choices[0].text.strip()
+        answers = []
+        for chunk in split_text(key):
+            response = openai.Completion.create(
+                engine="text-davinci-002",
+                prompt=chunk,
+                max_tokens=max_tokens,
+                n=1,
+                stop=None,
+                temperature=temperature,
+                top_p=top_p,
+            )
+            answer = response.choices[0].text.strip()
+            answers.append(answer)
         timestamp = time.time()
         data = {
-            "value": value,
+            "value": answers,
             "created": timestamp,
         }
         r.set(key, json.dumps(data))
-        return value
+        return answers
     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
         return ""
+
+# # Function to generate answer using GPT-3
+# def generate_answer(key, temperature=0.5, max_tokens=150, top_p=1.0):
+#     try:
+#         response = openai.Completion.create(
+#             engine="text-davinci-002",
+#             prompt=key,
+#             max_tokens=max_tokens,
+#             n=1,
+#             stop=None,
+#             temperature=temperature,
+#             top_p=top_p,
+#         )
+#         value = response.choices[0].text.strip()
+#         timestamp = time.time()
+#         data = {
+#             "value": value,
+#             "created": timestamp,
+#         }
+#         r.set(key, json.dumps(data))
+#         return value
+#     except (openai.error.InvalidRequestError, openai.error.AuthenticationError, openai.error.APIConnectionError,
+#             openai.error.APIError, openai.error.RateLimitError) as e:
+#         st.error(f"An error occurred while generating the answer: {e}")
+#         return ""
     
 def process_uploaded_file(uploaded_file):
     file_extension = os.path.splitext(uploaded_file.name)[1].lower()
@@ -114,9 +142,13 @@ def save_data_to_excel(sorted_data):
     data_list = []
 
     for key, data in sorted_data.items():
+        if isinstance(data["value"], list):
+            answer = "\n".join(data["value"])
+        else:
+            answer = data["value"]
         data_list.append({
             "Question": key,
-            "Answer": data["value"],
+            "Answer": answer,
             "Created": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data["created"]))
         })
 
@@ -137,6 +169,35 @@ def save_data_to_excel(sorted_data):
             
         bIO.seek(0)
         return bIO.read()
+
+
+# def save_data_to_excel(sorted_data):
+#     data_list = []
+
+#     for key, data in sorted_data.items():
+#         data_list.append({
+#             "Question": key,
+#             "Answer": data["value"],
+#             "Created": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data["created"]))
+#         })
+
+#     df = pd.DataFrame(data_list)
+
+#     with BytesIO() as bIO:
+#         with pd.ExcelWriter(bIO, engine='openpyxl', mode='w') as writer:
+#             df.to_excel(writer, index=False)
+            
+#             # Access the worksheet and set column width and word wrap
+#             ws = writer.book.active
+#             ws.column_dimensions['A'].width = 30
+#             ws.column_dimensions['B'].width = 50
+#             ws.column_dimensions['C'].width = 25
+#             for row in ws.iter_rows(min_row=2):
+#                 for cell in row:
+#                     cell.alignment = Alignment(wrap_text=True)  
+            
+#         bIO.seek(0)
+#         return bIO.read()
 
 # Streamlit app
 def main():
