@@ -170,16 +170,10 @@ def main():
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {key}\nAnswer:"
                     chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
-                    value += chunk_answer
+                    answer += chunk_answer
                 st.write("Answer:")
-                st.write(value)
-                #value=answer
-
-                                        
-#     # Button to store data
-#     if st.button("Store data"):
-#         store_data_in_redis(key, value)
-#         st.success(f"Data stored successfully: Key: {key}, Value: {value}")
+                st.write(answer)
+                value = answer                              
         
     # Reset and delete all data with confirmation
     with st.sidebar.expander("Reset and delete all data"):
