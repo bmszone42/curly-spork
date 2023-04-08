@@ -237,7 +237,7 @@ def main():
                 for chunk in chunks:
                     prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {key}\nAnswer:"
                     chunk_answer = generate_answer(key, temperature, max_tokens, top_p)
-                    #answer += "\n".join(chunk_answer) # convert the list to a string before concatenating
+                    answer += "\n".join(chunk_answer) # convert the list to a string before concatenating
                 st.write("Answer:")
                 st.write(answers) # answer is already a string object
                 #value = answer                              
