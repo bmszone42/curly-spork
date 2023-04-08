@@ -53,29 +53,29 @@ def read_docx(file):
         text += paragraph.text + "\n"
     return text
 
-# # Function to split text into chunks
-# def split_text(text, chunk_size=4096):
-#     lines = text.split("\n")
-#     wrapped_lines = [word for line in lines for word in line.split(" ")]
-#     return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
+# Function to split text into chunks
+def split_text(text, chunk_size=4096):
+    lines = text.split("\n")
+    wrapped_lines = [word for line in lines for word in line.split(" ")]
+    return [wrapped_lines[i:i+chunk_size] for i in range(0, len(wrapped_lines), chunk_size)]
 
-# def split_text(text, chunk_size=4096):
-#     chunks = []
-#     words = text.split()
-#     current_chunk = ""
-#     for word in words:
-#         # Add the current word to the current chunk, separated by a space
-#         temp_chunk = current_chunk + " " + word if current_chunk else word
-#         # If the current chunk exceeds the maximum length, add it to the list of chunks and start a new one
-#         if len(temp_chunk) > chunk_size:
-#             chunks.append(current_chunk)
-#             current_chunk = word
-#         else:
-#             current_chunk = temp_chunk
-#     # Add the last chunk to the list of chunks
-#     if current_chunk:
-#         chunks.append(current_chunk)
-#     return chunks
+def split_text(text, chunk_size=4096):
+    chunks = []
+    words = text.split()
+    current_chunk = ""
+    for word in words:
+        # Add the current word to the current chunk, separated by a space
+        temp_chunk = current_chunk + " " + word if current_chunk else word
+        # If the current chunk exceeds the maximum length, add it to the list of chunks and start a new one
+        if len(temp_chunk) > chunk_size:
+            chunks.append(current_chunk)
+            current_chunk = word
+        else:
+            current_chunk = temp_chunk
+    # Add the last chunk to the list of chunks
+    if current_chunk:
+        chunks.append(current_chunk)
+    return chunks
 
 def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
     try:
@@ -100,30 +100,6 @@ def generate_answer(prompt, temperature=0.5, max_tokens=150, top_p=1.0):
             openai.error.APIError, openai.error.RateLimitError) as e:
         st.error(f"An error occurred while generating the answer: {e}")
         return ""
-
-
-
-def split_text(text, question, chunk_size=4096):
-    chunks = []
-    words = text.split()
-    current_chunk = ""
-    for word in words:
-        # Add the current word to the current chunk, separated by a space
-        temp_chunk = current_chunk + " " + word if current_chunk else word
-        # If the current chunk exceeds the maximum length, add it to the list of chunks and start a new one
-        if len(temp_chunk) > chunk_size:
-            chunks.append(current_chunk)
-            current_chunk = word
-        else:
-            current_chunk = temp_chunk
-    # Add the last chunk to the list of chunks
-    if current_chunk:
-        chunks.append(current_chunk)
-    # Call generate_answer() once with the entire text
-    prompt = f"Answer the following question based on the document's content:\n\n{text}\n\nQuestion: {question}\nAnswer:"
-    answer = generate_answer(prompt, temperature, max_tokens, top_p)
-    return [answer]
-
 
 def process_uploaded_file(uploaded_file):
     file_extension = os.path.splitext(uploaded_file.name)[1].lower()
@@ -207,10 +183,10 @@ def main():
                 chunks = split_text(document_text, question)
                 answer = ""
                 for chunk in chunks:
-                    #prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
-                    #chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
+                    prompt = f"Answer the following question based on the document's content:\n\n{chunk}\n\nQuestion: {question}\nAnswer:"
+                    chunk_answer = generate_answer(prompt, temperature, max_tokens, top_p)
                     answer += chunk_answer + " "
-                st.write("Answer: " + answer.strip())
+                    st.write("Answer: " + answer.strip())
         
     # Reset and delete all data with confirmation
     with st.sidebar.expander("Reset and delete all data"):
